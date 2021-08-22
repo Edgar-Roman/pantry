@@ -1,4 +1,5 @@
 import requests
+import re
 from bs4 import BeautifulSoup
 import json
 
@@ -11,13 +12,18 @@ class Recipe:
                  recipe_ingredients, recipe_instructions, nutrition):
         self.name = name
         self.image = image
-        self.prep_time = prep_time
-        self.cook_time = cook_time
-        self.total_time = total_time
+        self.prep_time = self.extract_time_in_min(prep_time)
+        self.cook_time = self.extract_time_in_min(cook_time)
+        self.total_time = self.extract_time_in_min(total_time)
         self.recipe_yield = recipe_yield
         self.recipe_ingredients = recipe_ingredients
         self.recipe_instructions = recipe_instructions
         self.nutrition = nutrition
+
+    @staticmethod
+    def extract_time_in_min(time):
+        match = re.match(r'(P)(\d+)(DT)(\d+)(H)(\d+)(M)', time)
+        return 60 * int(match.group(4)) + int(match.group(6))
 
 
 def rotd_url():
@@ -51,7 +57,7 @@ if __name__ == '__main__':
     rotd_url = rotd_url()
     rec = get_recipe(rotd_url)
 
-    for val in rec.__dict__.values():
-        print(val)
+    for key, val in rec.__dict__.items():
+        print(key + ": " + str(val))
 
-    print("Hello chicken!")
+
