@@ -2,7 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 import json
 
-
 URL = 'https://www.allrecipes.com'
 ROTD = "Recipe of the Day"
 
@@ -55,3 +54,4 @@ if __name__ == '__main__':
     for val in rec.__dict__.values():
         print(val)
 
+    print("hi")
