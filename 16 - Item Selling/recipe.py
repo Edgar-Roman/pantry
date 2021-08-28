@@ -6,7 +6,7 @@ import json
 URL = 'https://www.allrecipes.com'
 ROTD = "Recipe of the Day"
 
-MEASUREMENTS = ['can', 'cans', 'tablespoon', 'tablespoons', 'teaspoon', 'teaspoons', ]
+MEASUREMENTS = ['can', 'cans', 'cloves', 'tablespoon', 'tablespoons', 'teaspoon', 'teaspoons', ]
 
 
 def rotd_url():
@@ -29,11 +29,11 @@ class Recipe:
     def __init__(self, recipe):
         self.name = recipe['name']
         self.image = recipe['image']['url']
-        self.prep_time = self.extract_time_in_min(recipe['prepTime'])
-        self.cook_time = self.extract_time_in_min(recipe['cookTime'])
-        self.total_time = self.extract_time_in_min(recipe['totalTime'])
+        self.prep_time_min = self.extract_time_in_min(recipe['prepTime'])
+        self.cook_time_min = self.extract_time_in_min(recipe['cookTime'])
+        self.total_time_min = self.extract_time_in_min(recipe['totalTime'])
         self.servings = self.extract_servings(recipe['recipeYield'])
-        self. ingredients = recipe['recipeIngredient']
+        self. ingredients = self.extract_ingredients(recipe['recipeIngredient'])
         self.instructions = self.extract_steps(recipe['recipeInstructions'])
         self.nutrition = self.extract_nutrition(recipe['nutrition'])
 
@@ -49,6 +49,16 @@ class Recipe:
     def extract_servings(servings):
         match = re.match(r'(\d)( servings)', servings)
         return match.group(1)
+
+    @staticmethod
+    def extract_ingredients(ingredients):
+        dictionary = {}
+        for ingredient in ingredients:
+            for measurement in MEASUREMENTS:
+                if measurement in ingredient:
+                    pos = ingredient.find(measurement) + len(measurement)
+                    dictionary[ingredient[pos:].strip()] = ingredient[:pos]
+        return dictionary
 
     @staticmethod
     def extract_steps(steps):
@@ -67,6 +77,10 @@ if __name__ == '__main__':
 
     for key, val in rec.__dict__.items():
         print(key + ": " + str(val))
+
+
+
+
 
 
 
